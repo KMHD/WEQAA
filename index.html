@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مركز وقاء — لوحة متابعة مشروع التطوير المستمر</title>
+<!-- PWA & App appearance -->
+<meta name="application-name" content="لوحة متابعة وقاء">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="وقاء — لوحة المتابعة">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#004d40">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23004d40'/><text y='72' x='50' text-anchor='middle' font-size='60' font-family='Arial' fill='%23f5c842'>و</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23004d40'/><text y='72' x='50' text-anchor='middle' font-size='60' font-family='Arial' fill='%23f5c842'>و</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --primary:#00796b; --primary-light:#4db6ac; --primary-dark:#004d40; --primary-glow:rgba(0,121,107,.18);
+  --gold:#c9922a; --gold-light:#f5c842; --gold-bg:rgba(201,146,42,.12);
+  --bg:#f4f6f8; --white:#ffffff; --surface:#ffffff;
+  --text:#1a2332; --text-muted:#5a6a7a; --text-dim:#9aaabb;
+  --border:#e2e8f0; --border-strong:#c8d5e0;
+  --green:#00796b; --red:#e53935; --blue:#1565c0; --orange:#ef6c00;
+  --shadow:0 2px 12px rgba(0,60,50,.08); --shadow-lg:0 8px 40px rgba(0,60,50,.14);
+  --radius:14px; --radius-sm:9px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Cairo','Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;direction:rtl}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes flash{0%{background:rgba(0,121,107,.15)}100%{background:transparent}}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+/* TOPBAR */
+.topbar{background:var(--primary-dark);color:#fff;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.topbar-brand{display:flex;align-items:center;gap:14px}
+.waqaa-logo{width:38px;height:38px;background:linear-gradient(135deg,var(--gold-light),var(--gold));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:var(--primary-dark);font-family:'Tajawal';flex-shrink:0}
+.topbar-title{font-family:'Tajawal';font-size:16px;font-weight:800;letter-spacing:-.2px}
+.topbar-sub{font-size:11px;opacity:.7;margin-top:1px}
+.topbar-actions{display:flex;align-items:center;gap:10px}
+.btn-price-toggle{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .2s}
+.btn-price-toggle:hover{background:rgba(255,255,255,.2)}
+.btn-price-toggle .toggle-icon{font-size:14px}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#4db6ac;animation:pulse 2s infinite;flex-shrink:0}
+
+/* WRAPPER */
+.wrapper{max-width:1440px;margin:0 auto;padding:24px}
+
+/* PROJECT BANNER */
+.project-banner{background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary) 60%,var(--primary-light) 100%);border-radius:var(--radius);padding:28px 32px;margin-bottom:22px;position:relative;overflow:hidden;animation:fadeUp .4s ease both;color:#fff}
+.project-banner::before{content:'';position:absolute;top:-40px;left:-40px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.05)}
+.project-banner::after{content:'';position:absolute;bottom:-30px;right:80px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.04)}
+.banner-inner{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.banner-title{font-family:'Tajawal';font-size:22px;font-weight:900;margin-bottom:4px}
+.banner-sub{font-size:13px;opacity:.8}
+.banner-dates{display:flex;gap:24px;flex-wrap:wrap}
+.date-item{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:10px 18px;text-align:center;cursor:pointer;transition:all .2s}
+.date-item:hover{background:rgba(255,255,255,.2)}
+.date-label{font-size:10px;opacity:.75;margin-bottom:3px}
+.date-val{font-family:'Tajawal';font-size:15px;font-weight:800}
+.date-edit-hint{font-size:9px;opacity:.55;margin-top:2px}
+
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;animation:fadeUp .5s ease both;box-shadow:var(--shadow)}
+.kpi-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.kpi-card::before{content:'';position:absolute;top:0;right:0;left:0;height:4px}
+.kpi-card.k1::before{background:linear-gradient(90deg,var(--primary-dark),var(--primary))}
+.kpi-card.k2::before{background:linear-gradient(90deg,#1565c0,#42a5f5)}
+.kpi-card.k3::before{background:linear-gradient(90deg,#6a1b9a,#ab47bc)}
+.kpi-card.k4::before{background:linear-gradient(90deg,#e65100,#ffa726)}
+.kpi-card.k5::before{background:linear-gradient(90deg,#c9922a,#f5c842)}
+.kpi-card:nth-child(1){animation-delay:.05s}.kpi-card:nth-child(2){animation-delay:.1s}
+.kpi-card:nth-child(3){animation-delay:.15s}.kpi-card:nth-child(4){animation-delay:.2s}
+.kpi-card:nth-child(5){animation-delay:.25s}
+.kpi-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px}
+.kpi-card.k1 .kpi-icon{background:rgba(0,121,107,.1)}
+.kpi-card.k2 .kpi-icon{background:rgba(21,101,192,.1)}
+.kpi-card.k3 .kpi-icon{background:rgba(106,27,154,.1)}
+.kpi-card.k4 .kpi-icon{background:rgba(230,81,0,.1)}
+.kpi-card.k5 .kpi-icon{background:var(--gold-bg)}
+.kpi-val{font-family:'Tajawal';font-size:36px;font-weight:900;line-height:1;margin-bottom:5px}
+.kpi-card.k1 .kpi-val{color:var(--primary)}.kpi-card.k2 .kpi-val{color:#1565c0}
+.kpi-card.k3 .kpi-val{color:#6a1b9a}.kpi-card.k4 .kpi-val{color:#e65100}
+.kpi-card.k5 .kpi-val{color:var(--gold);font-size:24px}
+.kpi-label{font-size:13px;color:var(--text-muted);font-weight:600}
+.kpi-sub{font-size:11px;color:var(--text-dim);margin-top:4px}
+
+/* COST CARDS */
+.cost-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.cost-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);animation:fadeUp .5s ease both;animation-delay:.3s;position:relative;overflow:hidden}
+.cost-card::after{content:'';position:absolute;bottom:0;right:0;left:0;height:3px}
+.cost-card.cc1::after{background:var(--primary)}
+.cost-card.cc2::after{background:#1565c0}
+.cost-card.cc3::after{background:var(--gold)}
+.cost-card.cc4::after{background:var(--red)}
+.cost-label{font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.cost-amount{font-family:'Tajawal';font-size:22px;font-weight:800;color:var(--text)}
+.cost-card.cc4 .cost-amount{color:var(--primary)}
+.cost-sub{font-size:11px;color:var(--text-dim);margin-top:4px}
+.price-hidden .cost-amount,.price-hidden .kpi-val.price-val{filter:blur(6px);user-select:none;transition:filter .3s}
+.price-visible .cost-amount,.price-visible .kpi-val.price-val{filter:none}
+
+/* BUDGET BAR */
+.budget-section{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:20px;box-shadow:var(--shadow);animation:fadeUp .5s ease both;animation-delay:.35s}
+.budget-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.budget-title{font-family:'Tajawal';font-size:15px;font-weight:800;color:var(--text)}
+.budget-amounts{display:flex;gap:20px;flex-wrap:wrap}
+.budg-item{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:5px}
+.budg-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.budget-bar-bg{height:22px;background:var(--bg);border-radius:11px;overflow:hidden;margin-bottom:8px;position:relative}
+.budget-bar-fill{height:100%;border-radius:11px;background:linear-gradient(90deg,var(--primary-dark),var(--primary),var(--primary-light));transition:width .9s ease;position:relative;display:flex;align-items:center;justify-content:flex-end;padding-left:8px}
+.budget-bar-fill::after{content:attr(data-pct);position:absolute;left:50%;transform:translateX(-50%);font-size:11px;font-weight:800;color:#fff;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,.3)}
+.budget-bar-vat{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--gold),var(--gold-light));margin-bottom:8px;transition:width .9s ease}
+.budget-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim)}
+
+/* CHARTS */
+.charts-row{display:grid;gap:16px;margin-bottom:16px}
+.charts-3{grid-template-columns:1.4fr 1fr 1fr}
+.chart-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);animation:fadeUp .5s ease both;animation-delay:.4s}
+.chart-card:nth-child(2){animation-delay:.45s}.chart-card:nth-child(3){animation-delay:.5s}
+.chart-head{margin-bottom:14px}
+.chart-title{font-family:'Tajawal';font-size:14px;font-weight:800;color:var(--text)}
+.chart-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+canvas{max-height:200px}
+.trainer-list{display:flex;flex-direction:column;gap:7px;max-height:200px;overflow-y:auto}
+.trainer-item{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:var(--bg);border-radius:8px;font-size:12px}
+.trainer-name{font-weight:600;color:var(--text)}
+.trainer-count{background:var(--primary);color:#fff;border-radius:10px;padding:2px 8px;font-size:10px;font-weight:700}
+
+/* TABLE SECTION */
+.table-section{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:18px;box-shadow:var(--shadow);animation:fadeUp .5s ease both;animation-delay:.5s}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.section-title{font-family:'Tajawal';font-size:15px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px}
+.section-count{background:var(--primary);color:#fff;border-radius:12px;padding:2px 10px;font-size:12px;font-weight:700}
+.section-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.search-inp{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 13px;font-family:inherit;font-size:13px;color:var(--text);outline:none;width:180px;transition:border-color .2s}
+.search-inp:focus{border-color:var(--primary)}
+.filter-tabs{display:flex;gap:6px}
+.ftab{padding:5px 13px;border-radius:16px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text-muted);transition:all .2s;font-family:inherit}
+.ftab.active,.ftab:hover{background:var(--primary);border-color:var(--primary);color:#fff}
+.btn-add{display:flex;align-items:center;gap:6px;background:var(--primary);color:#fff;border:none;border-radius:9px;padding:8px 16px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px var(--primary-glow)}
+.btn-add:hover{background:var(--primary-dark);transform:translateY(-1px)}
+
+/* DATA TABLE */
+.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table th{text-align:right;padding:9px 11px;font-size:11px;font-weight:700;color:var(--text-dim);letter-spacing:.3px;border-bottom:2px solid var(--border);background:var(--bg);white-space:nowrap}
+.data-table td{padding:11px 11px;border-bottom:1px solid rgba(226,232,240,.6);vertical-align:middle}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:rgba(0,121,107,.03)}
+.data-table tr.new-row td{animation:flash .8s ease}
+.prog-name{font-weight:600;color:var(--text);max-width:260px;line-height:1.4}
+.prog-venue{font-size:11px;color:var(--text-muted)}
+.type-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:10px;font-size:11px;font-weight:700;white-space:nowrap}
+.type-badge.hazori{background:rgba(0,121,107,.12);color:var(--primary)}
+.type-badge.remote{background:rgba(21,101,192,.1);color:#1565c0}
+.type-badge.external{background:rgba(230,81,0,.1);color:#e65100}
+.rating-cell{display:flex;align-items:center;gap:7px}
+.rating-bar-bg{height:6px;width:65px;background:var(--border);border-radius:3px;overflow:hidden;flex-shrink:0}
+.rating-bar-fill{height:100%;border-radius:3px;background:var(--primary)}
+.rating-pct{font-size:12px;font-weight:700;color:var(--primary)}
+.action-btns{display:flex;gap:4px;justify-content:center}
+.btn-act{background:none;border:none;cursor:pointer;padding:5px 7px;border-radius:7px;font-size:14px;transition:all .2s;color:var(--text-dim)}
+.btn-act.edit:hover{background:rgba(0,121,107,.12);color:var(--primary)}
+.btn-act.del:hover{background:rgba(229,57,53,.1);color:var(--red)}
+.num-badge{width:26px;height:26px;background:var(--bg);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text-muted)}
+
+/* BAGS SECTION */
+.bags-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.bag-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative;transition:all .2s}
+.bag-card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+.bag-card::before{content:'';position:absolute;top:0;right:0;left:0;height:3px;border-radius:12px 12px 0 0;background:linear-gradient(90deg,var(--primary-dark),var(--primary))}
+.bag-num{width:26px;height:26px;background:var(--primary);color:#fff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-bottom:9px}
+.bag-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;line-height:1.4}
+.bag-cost{font-family:'Tajawal';font-size:15px;font-weight:800;color:var(--gold);margin-bottom:8px}
+.bag-footer{display:flex;align-items:center;justify-content:space-between}
+.bag-status{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:10px;font-size:11px;font-weight:700}
+.bag-status.done{background:rgba(0,121,107,.1);color:var(--primary)}
+.bag-status.inprogress{background:rgba(21,101,192,.1);color:#1565c0}
+.bag-status.pending{background:rgba(230,81,0,.1);color:#e65100}
+
+/* ======== MODALS ======== */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{background:#fff;border-radius:20px;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;padding:28px;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.2);transform:translateY(24px) scale(.97);transition:transform .25s,opacity .25s;opacity:0}
+.overlay.open .modal{transform:none;opacity:1}
+.modal.sm{max-width:400px}
+.modal-bar{position:absolute;top:0;right:0;left:0;height:4px;border-radius:20px 20px 0 0;background:linear-gradient(90deg,var(--primary-dark),var(--primary),var(--primary-light))}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.modal-title{font-family:'Tajawal';font-size:17px;font-weight:800;display:flex;align-items:center;gap:9px}
+.btn-close{background:var(--bg);border:1px solid var(--border);color:var(--text-muted);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.btn-close:hover{background:rgba(229,57,53,.08);color:var(--red);border-color:var(--red)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full{grid-column:1/-1}
+.form-label{font-size:12px;font-weight:700;color:var(--text-muted)}
+.req{color:var(--red)}
+.form-inp,.form-sel{background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:9px 13px;color:var(--text);font-family:inherit;font-size:13px;outline:none;transition:border-color .2s,box-shadow .2s;width:100%}
+.form-inp:focus,.form-sel:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
+.form-inp::placeholder{color:var(--text-dim)}
+.form-sel option{background:#fff}
+.form-hint{font-size:10px;color:var(--text-dim)}
+.cost-preview-box{background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:9px 13px;font-family:'Tajawal';font-size:15px;font-weight:800;color:var(--gold);min-height:40px;display:flex;align-items:center}
+.modal-actions{display:flex;gap:9px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+.btn-cancel{padding:9px 20px;border-radius:9px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;background:transparent;border:1.5px solid var(--border);color:var(--text-muted);transition:all .2s}
+.btn-cancel:hover{border-color:var(--text-muted);color:var(--text)}
+.btn-save{padding:9px 24px;border-radius:9px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;background:var(--primary);border:none;color:#fff;transition:all .2s;box-shadow:0 3px 12px var(--primary-glow)}
+.btn-save:hover{background:var(--primary-dark);transform:translateY(-1px)}
+.btn-danger{padding:9px 20px;border-radius:9px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;background:var(--red);border:none;color:#fff;transition:all .2s}
+
+/* PASSWORD MODAL */
+.pwd-input-wrap{position:relative}
+.pwd-inp{padding-left:40px!important}
+.pwd-toggle{position:absolute;left:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:16px}
+.pwd-error{color:var(--red);font-size:12px;margin-top:6px;display:none}
+.pwd-error.show{display:block}
+.settings-section{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.settings-label{font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--primary-dark);border-radius:12px;padding:12px 22px;font-size:13px;font-weight:700;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,.25);z-index:500;transition:transform .3s ease;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* FOOTER */
+.footer{text-align:center;padding:20px;color:var(--text-dim);font-size:12px}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:3px}
+
+/* RESPONSIVE */
+@media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(3,1fr)}.cost-grid{grid-template-columns:1fr 1fr}.charts-3{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.kpi-grid{grid-template-columns:1fr 1fr}.cost-grid{grid-template-columns:1fr}.charts-3{grid-template-columns:1fr}.bags-grid{grid-template-columns:1fr}.topbar-sub{display:none}.form-grid{grid-template-columns:1fr}}
+/* DRAG & DROP team */
+.team-card{cursor:grab;transition:opacity .2s,transform .2s,box-shadow .2s}
+.team-card:active{cursor:grabbing}
+.team-card.dragging{opacity:.4;transform:scale(.97)}
+.team-card.drag-over{box-shadow:0 0 0 2px var(--primary),var(--shadow-lg)}
+
+/* DRAG & DROP dashboard widgets */
+.dash-widgets-container{display:contents}
+.kpi-card.widget-dragging{opacity:.35;transform:scale(.96);box-shadow:none}
+.kpi-card.widget-drag-over{box-shadow:0 0 0 2.5px var(--primary),var(--shadow-lg);transform:scale(1.02)}
+.kpi-card[draggable="true"]{cursor:grab}
+.kpi-card[draggable="true"]:active{cursor:grabbing}
+.drag-handle-hint{position:absolute;top:6px;left:8px;font-size:12px;color:var(--text-dim);opacity:.5;pointer-events:none;user-select:none}
+.bkp-card[draggable="true"]{cursor:grab}
+.bkp-card[draggable="true"]:active{cursor:grabbing}
+.bkp-card.widget-dragging{opacity:.35;transform:scale(.96)}
+.bkp-card.widget-drag-over{box-shadow:0 0 0 2.5px var(--primary),var(--shadow-lg)}
+</style>
+</head>
+<body class="price-visible">
+
+<!-- ====== TOAST ====== -->
+<div class="toast" id="toast"></div>
+
+<!-- ====== PASSWORD OVERLAY ====== -->
+<div class="overlay" id="pwdOverlay">
+  <div class="modal sm">
+    <div class="modal-bar"></div>
+    <div class="modal-head">
+      <div class="modal-title"><span>🔐</span><span id="pwdTitle">تحقق من الصلاحية</span></div>
+      <button class="btn-close" onclick="closePwdModal()">✕</button>
+    </div>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">أدخل كلمة المرور للمتابعة</p>
+    <div class="pwd-input-wrap">
+      <input type="password" id="pwdInput" class="form-inp pwd-inp" placeholder="كلمة المرور" onkeydown="if(event.key==='Enter')checkPwd()">
+      <button class="pwd-toggle" onclick="togglePwdVis()" tabindex="-1">👁</button>
+    </div>
+    <div class="pwd-error" id="pwdError">كلمة المرور غير صحيحة</div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closePwdModal()">إلغاء</button>
+      <button class="btn-save" onclick="checkPwd()">تأكيد</button>
+    </div>
+    <div class="settings-section" id="changePwdSection" style="display:none">
+      <!-- Tabs -->
+      <div style="display:flex;gap:6px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:10px">
+        <button class="ftab active" id="stab1" onclick="switchStab(1)">🔧 كلمة المرور</button>
+        <button class="ftab" id="stab2" onclick="switchStab(2)">🏷️ العناوين</button>
+        <button class="ftab" id="stab3" onclick="switchStab(3)">🖼️ الشعار</button>
+      </div>
+      <!-- Tab 1: Password -->
+      <div id="stab_panel1" style="display:flex;flex-direction:column;gap:10px">
+        <input type="password" id="newPwd1" class="form-inp" placeholder="كلمة المرور الجديدة">
+        <input type="password" id="newPwd2" class="form-inp" placeholder="تأكيد كلمة المرور الجديدة">
+        <button class="btn-save" style="width:100%" onclick="changePassword()">حفظ كلمة المرور</button>
+      </div>
+      <!-- Tab 2: Titles -->
+      <div id="stab_panel2" style="display:none;flex-direction:column;gap:10px">
+        <div class="form-group">
+          <label class="form-label">عنوان لوحة التحكم (الشريط العلوي)</label>
+          <input type="text" id="s_dashTitle" class="form-inp" placeholder="مركز وقاء — لوحة المتابعة">
+        </div>
+        <div class="form-group">
+          <label class="form-label">العنوان الفرعي (الشريط العلوي)</label>
+          <input type="text" id="s_dashSubtitle" class="form-inp" placeholder="مشروع التطوير المستمر">
+        </div>
+        <div class="form-group">
+          <label class="form-label">اسم المشروع (البانر)</label>
+          <input type="text" id="s_projectName" class="form-inp" placeholder="اسم المشروع">
+        </div>
+        <div class="form-group">
+          <label class="form-label">وصف المشروع (البانر)</label>
+          <input type="text" id="s_projectDesc" class="form-inp" placeholder="وصف المشروع">
+        </div>
+        <button class="btn-save" style="width:100%" onclick="saveTitles()">💾 حفظ العناوين</button>
+      </div>
+      <!-- Tab 3: Logo -->
+      <div id="stab_panel3" style="display:none;flex-direction:column;gap:12px">
+        <div style="text-align:center">
+          <div id="logoPreview" style="width:80px;height:80px;border:2px dashed var(--border);border-radius:14px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden">🏢</div>
+          <div style="font-size:11px;color:var(--text-muted)">معاينة الشعار</div>
+        </div>
+        <label class="form-label">رفع صورة الشعار (PNG/JPG)</label>
+        <input type="file" id="logoFile" class="form-inp" accept="image/*" onchange="previewLogo(this)">
+        <button class="btn-save" style="width:100%" onclick="saveLogo()">💾 حفظ الشعار</button>
+        <button class="btn-cancel" style="width:100%" onclick="removeLogo()">🗑 إزالة الشعار</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== ADD/EDIT PROGRAM MODAL ====== -->
+<div class="overlay" id="progModal" onclick="if(event.target===this)closeProgModal()">
+  <div class="modal">
+    <div class="modal-bar"></div>
+    <div class="modal-head">
+      <div class="modal-title"><span id="progModalIcon">➕</span><span id="progModalTitle">إضافة برنامج تدريبي</span></div>
+      <button class="btn-close" onclick="closeProgModal()">✕</button>
+    </div>
+    <input type="hidden" id="prog_id">
+    <input type="hidden" id="prog_section">
+    <div class="form-grid">
+      <div class="form-group full">
+        <label class="form-label">اسم البرنامج <span class="req">*</span></label>
+        <input type="text" id="prog_name" class="form-inp" placeholder="اسم البرنامج التدريبي">
+      </div>
+      <div class="form-group">
+        <label class="form-label">المدرب / الجهة <span class="req">*</span></label>
+        <input type="text" id="prog_trainer" class="form-inp" placeholder="اسم المدرب">
+      </div>
+      <div class="form-group">
+        <label class="form-label">نوع التدريب <span class="req">*</span></label>
+        <select id="prog_type" class="form-sel" onchange="autoCalcCost()">
+          <option value="">— اختر —</option>
+          <option value="hazori">حضوري</option>
+          <option value="remote">عن بعد</option>
+          <option value="external">خارجي</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">عدد المتدربين</label>
+        <input type="number" id="prog_count" class="form-inp" placeholder="25" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">عدد الأيام <span class="req">*</span></label>
+        <select id="prog_days" class="form-sel" onchange="autoCalcCost()">
+          <option value="">— اختر —</option>
+          <option value="1">1 يوم</option>
+          <option value="2">يومان</option>
+          <option value="3">3 أيام</option>
+          <option value="4">4 أيام</option>
+          <option value="5">5 أيام</option>
+          <option value="10">10 أيام</option>
+          <option value="28">4 أسابيع</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">التاريخ</label>
+        <input type="date" id="prog_date" class="form-inp">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">مقر التدريب</label>
+        <input type="text" id="prog_venue" class="form-inp" placeholder="مثال: فندق شيراتون الرياض">
+      </div>
+      <div class="form-group">
+        <label class="form-label">التقييم العام (%)</label>
+        <input type="number" id="prog_rating" class="form-inp" min="0" max="100" placeholder="مثال: 90">
+        <div class="form-hint">نسبة من 0 إلى 100</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">التكلفة (ريال)</label>
+        <div class="cost-preview-box" id="costPreview">تُحسب تلقائياً</div>
+        <input type="number" id="prog_cost" class="form-inp" placeholder="أو أدخل يدوياً" min="0" style="margin-top:6px">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeProgModal()">إلغاء</button>
+      <button class="btn-save" onclick="saveProg()">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== ADD/EDIT BAG MODAL ====== -->
+<div class="overlay" id="bagModal" onclick="if(event.target===this)closeBagModal()">
+  <div class="modal sm">
+    <div class="modal-bar"></div>
+    <div class="modal-head">
+      <div class="modal-title"><span id="bagModalIcon">🎒</span><span id="bagModalTitle">إضافة حقيبة تدريبية</span></div>
+      <button class="btn-close" onclick="closeBagModal()">✕</button>
+    </div>
+    <input type="hidden" id="bag_id">
+    <div style="display:flex;flex-direction:column;gap:13px">
+      <div class="form-group">
+        <label class="form-label">اسم الحقيبة <span class="req">*</span></label>
+        <input type="text" id="bag_name" class="form-inp" placeholder="اسم الحقيبة التدريبية">
+      </div>
+      <div class="form-group">
+        <label class="form-label">التكلفة (ريال)</label>
+        <input type="number" id="bag_cost" class="form-inp" placeholder="18000" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">الحالة</label>
+        <select id="bag_status" class="form-sel">
+          <option value="done">✅ مكتملة</option>
+          <option value="inprogress">🔵 قيد الإعداد</option>
+          <option value="pending">🟡 مخططة</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ملاحظات</label>
+        <input type="text" id="bag_notes" class="form-inp" placeholder="أي تفاصيل...">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeBagModal()">إلغاء</button>
+      <button class="btn-save" onclick="saveBag()">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== DATE EDIT MODAL ====== -->
+<div class="overlay" id="dateModal" onclick="if(event.target===this)closeDateModal()">
+  <div class="modal sm">
+    <div class="modal-bar"></div>
+    <div class="modal-head">
+      <div class="modal-title"><span>📅</span> تحرير تواريخ المشروع</div>
+      <button class="btn-close" onclick="closeDateModal()">✕</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:13px">
+      <div class="form-group">
+        <label class="form-label">تاريخ بداية المشروع</label>
+        <input type="date" id="proj_start" class="form-inp">
+      </div>
+      <div class="form-group">
+        <label class="form-label">تاريخ نهاية المشروع</label>
+        <input type="date" id="proj_end" class="form-inp">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeDateModal()">إلغاء</button>
+      <button class="btn-save" onclick="saveDates()">💾 حفظ التواريخ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== TOPBAR ====== -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="waqaa-logo" id="topbarLogo">و</div>
+    <div>
+      <div class="topbar-title" id="topbarTitle">مركز وقاء — لوحة المتابعة</div>
+      <div class="topbar-sub" id="topbarSub">مشروع التطوير المستمر للكوادر الوظيفية</div>
+    </div>
+  </div>
+  <div class="topbar-actions">
+    <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(255,255,255,.7)">
+      <div class="live-dot"></div> حي مباشر
+    </div>
+    <button class="btn-price-toggle" onclick="togglePrices()">
+      <span class="toggle-icon" id="priceIcon">👁</span>
+      <span id="priceLabel">إخفاء الأسعار</span>
+    </button>
+    <button class="btn-price-toggle" onclick="openSettings()">⚙️ الإعدادات</button>
+  </div>
+</div>
+
+<!-- ====== MAIN ====== -->
+<div class="wrapper">
+
+  <!-- PROJECT BANNER -->
+  <div class="project-banner">
+    <div class="banner-inner">
+      <div>
+        <div class="banner-title" id="bannerTitle">مشروع تطوير الكوادر الوظيفية</div>
+        <div class="banner-sub" id="bannerDesc">تكاليف مشروع التطوير المستمر — مركز وقاء للاستشارات والتدريب</div>
+      </div>
+      <div class="banner-dates" onclick="requirePwd('dates')">
+        <div class="date-item">
+          <div class="date-label">بداية المشروع</div>
+          <div class="date-val" id="displayStart">أكتوبر 2024</div>
+          <div class="date-edit-hint">انقر للتعديل ✏️</div>
+        </div>
+        <div class="date-item">
+          <div class="date-label">نهاية المشروع</div>
+          <div class="date-val" id="displayEnd">ديسمبر 2026</div>
+          <div class="date-edit-hint">انقر للتعديل ✏️</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI CARDS -->
+  <div class="kpi-grid" id="kpiGrid">
+    <div class="kpi-card k1" draggable="true" data-widget="kpi">
+      <span class="drag-handle-hint">⠿</span>
+      <div class="kpi-icon">📋</div>
+      <div class="kpi-val" id="kPrograms">0</div>
+      <div class="kpi-label">برامج التدريب</div>
+      <div class="kpi-sub" id="kProgSub">—</div>
+    </div>
+    <div class="kpi-card k2" draggable="true" data-widget="kpi">
+      <span class="drag-handle-hint">⠿</span>
+      <div class="kpi-icon">🎒</div>
+      <div class="kpi-val" id="kBags">0</div>
+      <div class="kpi-label">الحقائب التدريبية</div>
+      <div class="kpi-sub" id="kBagSub">—</div>
+    </div>
+    <div class="kpi-card k3" draggable="true" data-widget="kpi">
+      <span class="drag-handle-hint">⠿</span>
+      <div class="kpi-icon">👨‍🏫</div>
+      <div class="kpi-val" id="kTrainers">0</div>
+      <div class="kpi-label">خبراء التدريب</div>
+      <div class="kpi-sub">مدرب ومتخصص</div>
+    </div>
+    <div class="kpi-card k4" draggable="true" data-widget="kpi">
+      <span class="drag-handle-hint">⠿</span>
+      <div class="kpi-icon">👥</div>
+      <div class="kpi-val" id="kParticipants">0</div>
+      <div class="kpi-label">إجمالي المتدربين</div>
+      <div class="kpi-sub">مقعد تدريبي</div>
+    </div>
+  </div>
+
+
+  <!-- BUDGET KPI ROW -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:20px" id="budgetKpiRow">
+    <div class="kpi-card bkp-card" style="animation-delay:.3s" id="bkp1" draggable="true">
+      <span class="drag-handle-hint">⠿</span>
+      <div style="position:absolute;top:0;right:0;left:0;height:3px;background:linear-gradient(90deg,#004d40,#00796b)"></div>
+      <div class="kpi-icon">🏦</div>
+      <div class="kpi-val price-val" id="bkTotal" style="font-size:20px;color:#00796b">—</div>
+      <div class="kpi-label">إجمالي قيمة المشروع</div>
+      <div class="kpi-sub">الميزانية المعتمدة</div>
+    </div>
+    <div class="kpi-card bkp-card" style="animation-delay:.35s" id="bkp2" draggable="true">
+      <span class="drag-handle-hint">⠿</span>
+      <div style="position:absolute;top:0;right:0;left:0;height:3px;background:linear-gradient(90deg,#e65100,#ffa726)"></div>
+      <div class="kpi-icon">📤</div>
+      <div class="kpi-val price-val" id="bkSpent" style="font-size:20px;color:#e65100">—</div>
+      <div class="kpi-label">إجمالي المبلغ المصروف</div>
+      <div class="kpi-sub" id="bkSpentSub">برامج + حقائب + ضريبة</div>
+    </div>
+    <div class="kpi-card bkp-card" style="animation-delay:.4s" id="bkp3" draggable="true">
+      <span class="drag-handle-hint">⠿</span>
+      <div style="position:absolute;top:0;right:0;left:0;height:3px;background:linear-gradient(90deg,#1565c0,#42a5f5)"></div>
+      <div class="kpi-icon">💵</div>
+      <div class="kpi-val price-val" id="bkRemain" style="font-size:20px;color:#1565c0">—</div>
+      <div class="kpi-label">إجمالي المبلغ المتبقي</div>
+      <div class="kpi-sub">لمركز وقاء</div>
+    </div>
+    <div class="kpi-card bkp-card" style="animation-delay:.45s" id="bkp4" draggable="true">
+      <span class="drag-handle-hint">⠿</span>
+      <div style="position:absolute;top:0;right:0;left:0;height:3px;background:linear-gradient(90deg,#6a1b9a,#ab47bc)"></div>
+      <div class="kpi-icon">📈</div>
+      <div class="kpi-val" id="bkProgress" style="font-size:30px;color:#6a1b9a">0%</div>
+      <div class="kpi-label">نسبة إنجاز المشروع</div>
+      <div style="margin-top:10px">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-dim);margin-bottom:4px">
+          <span>الصرف من الميزانية</span><span id="bkProgressLbl" style="color:#6a1b9a;font-weight:700">0%</span>
+        </div>
+        <div style="height:6px;background:var(--bg);border-radius:3px;overflow:hidden">
+          <div id="bkProgressBar" style="height:100%;border-radius:3px;background:linear-gradient(90deg,#6a1b9a,#ab47bc);width:0%;transition:width .9s ease"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COST BREAKDOWN -->
+  <div class="cost-grid">
+    <div class="cost-card cc1">
+      <div class="cost-label">📚 برامج التدريب الداخلية</div>
+      <div class="cost-amount price-val" id="cInternal">—</div>
+      <div class="cost-sub" id="cInternalSub">—</div>
+    </div>
+    <div class="cost-card cc2">
+      <div class="cost-label">🏢 البرامج الخارجية</div>
+      <div class="cost-amount price-val" id="cExternal">—</div>
+      <div class="cost-sub" id="cExternalSub">—</div>
+    </div>
+    <div class="cost-card cc3">
+      <div class="cost-label">🎒 الحقائب التدريبية</div>
+      <div class="cost-amount price-val" id="cBags">—</div>
+      <div class="cost-sub" id="cBagsSub">—</div>
+    </div>
+    <div class="cost-card cc4">
+      <div class="cost-label">🏦 المبلغ المتبقي لمركز وقاء</div>
+      <div class="cost-amount price-val" id="cRemaining">—</div>
+      <div class="cost-sub">من إجمالي قيمة المشروع</div>
+    </div>
+  </div>
+
+  <!-- BUDGET BAR -->
+  <div class="budget-section">
+    <div class="budget-header">
+      <div class="budget-title">📊 نسب توزيع تكاليف المشروع</div>
+      <div class="budget-amounts">
+        <div class="budg-item"><div class="budg-dot" style="background:var(--primary)"></div>مجموعة الرواد: <strong class="price-val" id="bRuwwad">—</strong></div>
+        <div class="budg-item"><div class="budg-dot" style="background:var(--gold)"></div>ضريبة 15%: <strong class="price-val" id="bVat">—</strong></div>
+        <div class="budg-item"><div class="budg-dot" style="background:#e2e8f0"></div>المتبقي لوقاء: <strong class="price-val" id="bRemain">—</strong></div>
+      </div>
+    </div>
+    <div class="budget-bar-bg">
+      <div class="budget-bar-fill" id="budgetFill" style="width:0%"></div>
+    </div>
+    <div class="budget-labels">
+      <span>0</span>
+      <span id="budgetTotalLabel">إجمالي قيمة المشروع: 1,991,667.75 ريال</span>
+    </div>
+  </div>
+
+  <!-- CHARTS -->
+  <div class="charts-row charts-3">
+    <div class="chart-card">
+      <div class="chart-head">
+        <div class="chart-title">توزيع البرامج حسب النوع</div>
+        <div class="chart-sub">حضوري — عن بعد — خارجي</div>
+      </div>
+      <canvas id="chartType"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-head">
+        <div class="chart-title">البرامج حسب السنة</div>
+        <div class="chart-sub">2024 / 2025 / 2026</div>
+      </div>
+      <canvas id="chartYear"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-head">
+        <div class="chart-title">خبراء التدريب (أكثر تدريباً)</div>
+        <div class="chart-sub">عدد البرامج لكل مدرب</div>
+      </div>
+      <div class="trainer-list" id="trainerList"></div>
+    </div>
+  </div>
+
+  <!-- PROGRAMS TABLE -->
+  <div class="table-section">
+    <div class="section-header">
+      <div class="section-title">📋 أولاً: برامج التدريب الداخلية <span class="section-count" id="internalCount">0</span></div>
+      <div class="section-actions">
+        <input type="text" class="search-inp" placeholder="🔍 بحث..." oninput="filterProgs(this.value,'internal')">
+        <button class="btn-add" onclick="requirePwd('add_internal')">➕ إضافة</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th><th>اسم البرنامج</th><th>المدرب</th><th>النوع</th>
+            <th>المتدربون</th><th>الأيام</th><th>التاريخ</th>
+            <th>التقييم العام للبرنامج</th><th class="price-col">التكلفة (ريال)</th><th>إجراء</th>
+          </tr>
+        </thead>
+        <tbody id="internalTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EXTERNAL PROGRAMS TABLE -->
+  <div class="table-section">
+    <div class="section-header">
+      <div class="section-title">🏢 ثانياً: البرامج الخارجية <span class="section-count" id="externalCount">0</span></div>
+      <div class="section-actions">
+        <input type="text" class="search-inp" placeholder="🔍 بحث..." oninput="filterProgs(this.value,'external')">
+        <button class="btn-add" onclick="requirePwd('add_external')">➕ إضافة</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th><th>اسم البرنامج</th><th>الجهة المنفذة</th><th>المتدربون</th>
+            <th>الأيام</th><th>التاريخ</th><th class="price-col">التكلفة (ريال)</th><th>إجراء</th>
+          </tr>
+        </thead>
+        <tbody id="externalTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- BAGS SECTION -->
+  <div class="table-section">
+    <div class="section-header">
+      <div class="section-title">🎒 ثالثاً: الحقائب التدريبية <span class="section-count" id="bagsCount">0</span></div>
+      <div class="section-actions">
+        <button class="btn-add" onclick="requirePwd('add_bag')">➕ إضافة حقيبة</button>
+      </div>
+    </div>
+    <div class="bags-grid" id="bagsGrid"></div>
+  </div>
+
+
+  <!-- TEAM SECTION -->
+  <div class="table-section" style="animation-delay:.55s">
+    <div class="section-header">
+      <div class="section-title">👥 فريق عمل المشروع <span class="section-count" id="teamCount">0</span></div>
+      <div class="section-actions">
+        <button class="btn-add" onclick="requirePwd('add_team')">➕ إضافة عضو</button>
+      </div>
+    </div>
+    <div id="teamGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px"></div>
+  </div>
+
+  <div class="footer">مركز وقاء © 2024–2026 &nbsp;•&nbsp; جميع الحقوق محفوظة &nbsp;•&nbsp; لوحة متابعة مشروع التطوير المستمر</div>
+</div>
+
+<script>
+// ======================== DATA ========================
+const TOTAL_PROJECT = 1991667.75;
+const COSTS_TABLE = {
+  hazori:{2:36400,3:40400,4:48500,5:58600},
+  remote:{2:18200,3:28300,4:36400,5:42500,10:68700}
+};
+
+const DEFAULT_PASSWORD = 'waqaa@2024';
+
+let DATA = {
+  password: DEFAULT_PASSWORD,
+  projectStart: '2024-10-27',
+  projectEnd: '2026-12-31',
+  dashTitle: 'مركز وقاء — لوحة المتابعة',
+  dashSubtitle: 'مشروع التطوير المستمر للكوادر الوظيفية',
+  projectName: 'مشروع تطوير الكوادر الوظيفية',
+  projectDesc: 'تكاليف مشروع التطوير المستمر — مركز وقاء للاستشارات والتدريب',
+  logoDataUrl: '',
+  team: [
+    {id:1, name:'أ. محمد العنزي', role:'مدير المشروع'},
+    {id:2, name:'أ. سارة الأحمدي', role:'منسقة التدريب'},
+  ],
+  internal: [
+    {id:1,name:'الإدارة المتقدمة للعلاقات العامة الدولية وفن المراسم والبروتوكول',trainer:'تركي اليامي',type:'hazori',count:25,days:3,date:'2024-10-27',venue:'فندق فيتوري بالاس',rating:'',cost:40400},
+    {id:2,name:'إدارة تجربة العملاء',trainer:'إحسان عبد الله',type:'remote',count:25,days:3,date:'2024-11-03',venue:'منصة ZOOM',rating:'',cost:28300},
+    {id:3,name:'فنيات بناء وإعداد قاعدة البيانات ودورها في اتخاذ القرارات',trainer:'محمد السبيعي',type:'remote',count:25,days:5,date:'2024-11-10',venue:'منصة ZOOM',rating:'',cost:42500},
+    {id:4,name:'إدارة المشاريع الاحترافية',trainer:'م. عبد الرحمن الباهي',type:'hazori',count:25,days:5,date:'2024-11-17',venue:'فندق شيراتون الرياض',rating:'',cost:58600},
+    {id:5,name:'حل المشكلات واتخاذ القرارات',trainer:'د. صديق العمرو',type:'remote',count:25,days:2,date:'2024-11-24',venue:'منصة ZOOM',rating:'',cost:18200},
+    {id:6,name:'بطاقات الأداء المتوازن BSC',trainer:'د. إدريس أوهلال',type:'hazori',count:25,days:3,date:'2024-12-01',venue:'فندق هوليداي إن الازدهار',rating:'',cost:40400},
+    {id:7,name:'تنمية مهارات إعداد وكتابة التقارير ومحاضر الاجتماعات',trainer:'د. سعد العريفي',type:'hazori',count:25,days:2,date:'2024-12-15',venue:'فندق شيراتون الرياض',rating:'',cost:36400},
+    {id:8,name:'قياس مؤشرات الأداء الرئيسية KPIs',trainer:'د. طارق العتيبي',type:'hazori',count:25,days:3,date:'2024-12-22',venue:'فندق هوليداي إن الازدهار',rating:'',cost:40400},
+    {id:9,name:'التطوير التنظيمي وإدارة التغيير',trainer:'نايف العويثاني',type:'hazori',count:25,days:3,date:'2025-01-26',venue:'فندق حياة بالاس',rating:'',cost:40400},
+    {id:10,name:'التفكير الإبداعي وإيجاد الحلول الابتكارية',trainer:'أسامة بدندي',type:'remote',count:25,days:3,date:'2025-02-02',venue:'منصة ZOOM',rating:'',cost:28300},
+    {id:11,name:'إدارة المخاطر واستمرارية الأعمال وفق ISO31000',trainer:'م. إسلام عفيفي',type:'hazori',count:25,days:5,date:'2025-09-02',venue:'فندق بريرا النخيل',rating:'',cost:58600},
+    {id:12,name:'إدارة الصحة والسلامة المهنية في بيئة العمل',trainer:'م. رفعت باسروان',type:'remote',count:25,days:3,date:'2025-02-16',venue:'منصة ZOOM',rating:'',cost:28300},
+    {id:13,name:'تحديد الاحتياج التدريبي',trainer:'د. محمد العامري',type:'hazori',count:7,days:4,date:'2025-10-03',venue:'مقر مركز وقاء',rating:'',cost:48500},
+    {id:14,name:'إدارة العلاقات في بيئة العمل',trainer:'ياسر الحزيمي',type:'hazori',count:60,days:1,date:'2025-04-17',venue:'مقر مركز وقاء',rating:'',cost:48500},
+    {id:15,name:'إعداد الحقائب التدريبية',trainer:'د. حسن الجوني',type:'hazori',count:25,days:5,date:'2025-05-25',venue:'فندق ألوفت الرياض',rating:'',cost:58600},
+    {id:16,name:'تدريب المدربين',trainer:'سمير بنتن',type:'hazori',count:25,days:5,date:'2025-07-09',venue:'فندق هوليداي إن الميدان',rating:'',cost:58600},
+    {id:17,name:'إدارة الطوارئ',trainer:'رفعت باسروان',type:'hazori',count:25,days:4,date:'2025-09-14',venue:'فندق ألوفت الرياض',rating:'',cost:48500},
+    {id:18,name:'إدارة المستودعات والمخزون',trainer:'محمد الحريصي',type:'hazori',count:25,days:4,date:'2025-12-10',venue:'فندق ألوفت الرياض',rating:'',cost:48500},
+    {id:19,name:'تحليل البيانات وإعداد التقارير الاحترافية باستخدام Excel',trainer:'آباد - أحمد شكري',type:'hazori',count:25,days:5,date:'2025-11-09',venue:'فندق هوليداي إن الميدان',rating:'',cost:58600},
+    {id:20,name:'تحليل البيانات باستخدام Power BI',trainer:'آباد - محمد العويس',type:'hazori',count:25,days:5,date:'2025-11-16',venue:'فندق هوليداي إن الميدان',rating:'',cost:58600},
+    {id:21,name:'مهارات إعداد وكتابة التقارير الفنية',trainer:'د. سعد العريفي',type:'hazori',count:25,days:3,date:'2025-11-18',venue:'فندق هوليداي إن الميدان',rating:'',cost:40400},
+    {id:22,name:'إدارة المشاريع الاحترافية',trainer:'د. عبد الرحمن باهي',type:'hazori',count:25,days:5,date:'2026-01-11',venue:'فندق مداريم كراون',rating:'',cost:58600},
+    {id:23,name:'أساسيات إتيكيت وبروتوكول الأعمال',trainer:'د. عبد الله الحوطي',type:'hazori',count:25,days:5,date:'2026-02-01',venue:'فندق مداريم كراون',rating:'',cost:58600},
+    {id:24,name:'قيمة الكلمة',trainer:'د. سعد العريفي',type:'hazori',count:25,days:2,date:'2026-02-04',venue:'فندق مداريم كراون',rating:'',cost:36400},
+  ],
+  external: [
+    {id:101,name:'المنافسات والمشتريات الحكومية',trainer:'جهة خارجية',count:2,days:28,date:'2025-06-08',cost:5600},
+    {id:102,name:'الجوانب القانونية - نظام العمل السعودي',trainer:'جهة خارجية',count:8,days:3,date:'2025-12-07',cost:22400},
+    {id:103,name:'برنامج أساسيات الشبكات Network+ (A+)',trainer:'جهة خارجية',count:2,days:28,date:'2025-12-07',cost:6440},
+    {id:104,name:'نظام الإثبات',trainer:'جهة خارجية',count:4,days:3,date:'2025-12-15',cost:5544},
+    {id:105,name:'عمليات الموارد البشرية',trainer:'جهة خارجية',count:5,days:5,date:'2025-12-21',cost:17500},
+    {id:106,name:'شهادة التعاقب الوظيفي',trainer:'جهة خارجية',count:1,days:3,date:'2025-12-28',cost:2520},
+    {id:107,name:'المراجعة المبنية على المخاطر',trainer:'جهة خارجية',count:1,days:4,date:'2026-01-18',cost:8533},
+  ],
+  bags: [
+    {id:201,name:'التطوير التنظيمي وإدارة التغيير',cost:18000,status:'done',notes:''},
+    {id:202,name:'التفكير الإبداعي وإيجاد الحلول الابتكارية',cost:18000,status:'done',notes:''},
+    {id:203,name:'إدارة المخاطر واستمرارية الأعمال وفق ISO31000',cost:18000,status:'done',notes:''},
+    {id:204,name:'إدارة الصحة والسلامة المهنية في بيئة العمل',cost:18000,status:'done',notes:''},
+    {id:205,name:'إدارة الطوارئ',cost:18000,status:'done',notes:''},
+    {id:206,name:'إدارة المستودعات والمخزون',cost:18000,status:'done',notes:''},
+  ]
+};
+
+let nextId = 300;
+let priceVisible = true;
+let pendingAction = null;
+let editingBagId = null;
+let editingProgId = null;
+let internalFilter = '';
+let externalFilter = '';
+
+// ======================== localStorage ========================
+// Version token — bump this string whenever BASE defaults change
+const LS_KEY     = 'waqaa_dashboard_v2';
+const LS_VER_KEY = 'waqaa_ver_v2';
+const LS_VERSION = '2025-04-22-r1'; // change to force full reset
+
+function saveData(){
+  try{
+    localStorage.setItem(LS_KEY, JSON.stringify(DATA));
+    localStorage.setItem(LS_VER_KEY, LS_VERSION);
+  }catch(e){}
+}
+
+function loadData(){
+  try{
+    const storedVer = localStorage.getItem(LS_VER_KEY);
+    const raw = localStorage.getItem(LS_KEY);
+    if(!raw || storedVer !== LS_VERSION){
+      // Stale / absent — wipe and start fresh
+      localStorage.removeItem(LS_KEY);
+      localStorage.removeItem(LS_VER_KEY);
+      return;
+    }
+    const d = JSON.parse(raw);
+    // Deep merge: only overwrite DATA keys that exist in d
+    // Never let a missing key crash
+    const merge = (target, src) => {
+      Object.keys(src).forEach(k => {
+        if(k === 'internal' || k === 'external' || k === 'bags' || k === 'team'){
+          if(Array.isArray(src[k])) target[k] = src[k];
+        } else {
+          target[k] = src[k];
+        }
+      });
+    };
+    merge(DATA, d);
+  }catch(e){ console.warn('loadData error', e); }
+}
+
+// ======================== PASSWORD ========================
+function requirePwd(action){
+  pendingAction=action;
+  document.getElementById('pwdInput').value='';
+  document.getElementById('pwdError').classList.remove('show');
+  document.getElementById('changePwdSection').style.display='none';
+  document.getElementById('pwdTitle').textContent='تحقق من الصلاحية';
+  openOverlay('pwdOverlay');
+}
+function closePwdModal(){closeOverlay('pwdOverlay');pendingAction=null;}
+function togglePwdVis(){
+  const inp=document.getElementById('pwdInput');
+  inp.type=inp.type==='password'?'text':'password';
+}
+function checkPwd(){
+  const val=document.getElementById('pwdInput').value;
+  if(val===DATA.password){
+    closeOverlay('pwdOverlay');
+    executeAction(pendingAction);
+    pendingAction=null;
+  } else {
+    document.getElementById('pwdError').classList.add('show');
+    document.getElementById('pwdInput').focus();
+  }
+}
+function openSettings(){
+  pendingAction='settings';
+  document.getElementById('pwdInput').value='';
+  document.getElementById('pwdError').classList.remove('show');
+  document.getElementById('changePwdSection').style.display='none';
+  document.getElementById('pwdTitle').textContent='إعدادات النظام';
+  openOverlay('pwdOverlay');
+}
+function changePassword(){
+  const p1=document.getElementById('newPwd1').value;
+  const p2=document.getElementById('newPwd2').value;
+  if(!p1){showToast('❌ أدخل كلمة مرور جديدة');return;}
+  if(p1!==p2){showToast('❌ كلمتا المرور غير متطابقتين');return;}
+  DATA.password=p1;saveData();
+  closeOverlay('pwdOverlay');
+  showToast('✅ تم تغيير كلمة المرور بنجاح');
+}
+function executeAction(action){
+  if(!action)return;
+  if(action==='add_internal'){openProgModal(null,'internal');}
+  else if(action==='add_external'){openProgModal(null,'external');}
+  else if(action==='add_bag'){openBagModal(null);}
+  else if(action==='add_team'){openTeamModal(null);}
+  else if(action==='dates'){openDateModal();}
+  else if(action==='settings'){
+    document.getElementById('changePwdSection').style.display='block';
+    document.getElementById('newPwd1').value='';
+    document.getElementById('newPwd2').value='';
+    switchStab(1);
+    // prefill titles
+    document.getElementById('s_dashTitle').value=DATA.dashTitle||'';
+    document.getElementById('s_dashSubtitle').value=DATA.dashSubtitle||'';
+    document.getElementById('s_projectName').value=DATA.projectName||'';
+    document.getElementById('s_projectDesc').value=DATA.projectDesc||'';
+    // logo preview
+    if(DATA.logoDataUrl){
+      document.getElementById('logoPreview').innerHTML=`<img src="${DATA.logoDataUrl}" style="width:100%;height:100%;object-fit:contain;border-radius:12px">`;
+    }
+    openOverlay('pwdOverlay');
+  }
+  else if(action.startsWith('edit_prog_')){const id=parseInt(action.split('_')[2]);openProgModal(id);}
+  else if(action.startsWith('del_prog_')){const id=parseInt(action.split('_')[2]);deleteProg(id);}
+  else if(action.startsWith('edit_bag_')){const id=parseInt(action.split('_')[2]);openBagModal(id);}
+  else if(action.startsWith('del_bag_')){const id=parseInt(action.split('_')[2]);deleteBag(id);}
+  else if(action.startsWith('edit_team_')){const id=parseInt(action.split('_')[2]);openTeamModal(id);}
+  else if(action.startsWith('del_team_')){const id=parseInt(action.split('_')[2]);deleteTeamMember(id);}
+}
+
+// ======================== OVERLAY HELPERS ========================
+function openOverlay(id){document.getElementById(id).classList.add('open');}
+function closeOverlay(id){document.getElementById(id).classList.remove('open');}
+
+// ======================== PRICE TOGGLE ========================
+function togglePrices(){
+  priceVisible=!priceVisible;
+  document.body.classList.toggle('price-hidden',!priceVisible);
+  document.body.classList.toggle('price-visible',priceVisible);
+  document.getElementById('priceIcon').textContent=priceVisible?'👁':'🙈';
+  document.getElementById('priceLabel').textContent=priceVisible?'إخفاء الأسعار':'إظهار الأسعار';
+  // hide/show price columns
+  document.querySelectorAll('.price-col').forEach(el=>el.style.display=priceVisible?'':'none');
+}
+
+// ======================== DATES ========================
+function openDateModal(){
+  document.getElementById('proj_start').value=DATA.projectStart;
+  document.getElementById('proj_end').value=DATA.projectEnd;
+  openOverlay('dateModal');
+}
+function closeDateModal(){closeOverlay('dateModal');}
+function saveDates(){
+  DATA.projectStart=document.getElementById('proj_start').value||DATA.projectStart;
+  DATA.projectEnd=document.getElementById('proj_end').value||DATA.projectEnd;
+  saveData();closeDateModal();
+  updateDateDisplay();
+  showToast('✅ تم حفظ تواريخ المشروع');
+}
+function updateDateDisplay(){
+  const fmt=(d)=>{
+    if(!d)return'—';
+    try{
+      const dt=new Date(d);
+      return dt.toLocaleDateString('ar-SA',{year:'numeric',month:'long'});
+    }catch(e){return d;}
+  };
+  document.getElementById('displayStart').textContent=fmt(DATA.projectStart);
+  document.getElementById('displayEnd').textContent=fmt(DATA.projectEnd);
+}
+
+// ======================== PROGRAM MODAL ========================
+function openProgModal(id, section='internal'){
+  editingProgId=id;
+  document.getElementById('prog_id').value=id||'';
+  document.getElementById('prog_section').value=section;
+  if(id){
+    const allProgs=[...DATA.internal,...DATA.external];
+    const p=allProgs.find(x=>x.id===id);
+    if(!p)return;
+    document.getElementById('progModalIcon').textContent='✏️';
+    document.getElementById('progModalTitle').textContent='تعديل البرنامج التدريبي';
+    document.getElementById('prog_name').value=p.name;
+    document.getElementById('prog_trainer').value=p.trainer;
+    document.getElementById('prog_type').value=p.type||'hazori';
+    document.getElementById('prog_count').value=p.count||'';
+    document.getElementById('prog_days').value=p.days||'';
+    document.getElementById('prog_date').value=p.date||'';
+    document.getElementById('prog_venue').value=p.venue||'';
+    document.getElementById('prog_rating').value=p.rating||'';
+    document.getElementById('prog_cost').value=p.cost||'';
+    document.getElementById('costPreview').textContent=p.cost?(p.cost.toLocaleString('en-US')+' ريال'):'—';
+  } else {
+    document.getElementById('progModalIcon').textContent='➕';
+    document.getElementById('progModalTitle').textContent='إضافة برنامج تدريبي';
+    ['prog_name','prog_trainer','prog_count','prog_days','prog_venue','prog_rating','prog_cost'].forEach(f=>document.getElementById(f).value='');
+    document.getElementById('prog_type').value=section==='external'?'external':'hazori';
+    document.getElementById('prog_date').value=new Date().toISOString().split('T')[0];
+    document.getElementById('costPreview').textContent='تُحسب تلقائياً';
+  }
+  openOverlay('progModal');
+}
+function closeProgModal(){closeOverlay('progModal');}
+function autoCalcCost(){
+  const type=document.getElementById('prog_type').value;
+  const days=parseInt(document.getElementById('prog_days').value)||0;
+  if(type&&days&&COSTS_TABLE[type]&&COSTS_TABLE[type][days]){
+    const c=COSTS_TABLE[type][days];
+    document.getElementById('costPreview').textContent=c.toLocaleString('en-US')+' ريال';
+    document.getElementById('prog_cost').value=c;
+  }
+}
+function saveProg(){
+  const name=document.getElementById('prog_name').value.trim();
+  const trainer=document.getElementById('prog_trainer').value.trim();
+  if(!name){showToast('❌ أدخل اسم البرنامج');return;}
+  if(!trainer){showToast('❌ أدخل اسم المدرب');return;}
+  const section=document.getElementById('prog_section').value;
+  const obj={
+    name,trainer,
+    type:document.getElementById('prog_type').value||'hazori',
+    count:parseInt(document.getElementById('prog_count').value)||0,
+    days:parseInt(document.getElementById('prog_days').value)||0,
+    date:document.getElementById('prog_date').value,
+    venue:document.getElementById('prog_venue').value.trim(),
+    rating:document.getElementById('prog_rating').value,
+    cost:parseInt(document.getElementById('prog_cost').value)||0,
+  };
+  const id=parseInt(document.getElementById('prog_id').value)||null;
+  if(id){
+    // find in which array
+    let idx=DATA.internal.findIndex(p=>p.id===id);
+    if(idx>-1){DATA.internal[idx]={...DATA.internal[idx],...obj};}
+    else{idx=DATA.external.findIndex(p=>p.id===id);if(idx>-1)DATA.external[idx]={...DATA.external[idx],...obj};}
+    showToast('✏️ تم تحديث البرنامج');
+  } else {
+    const newId=nextId++;
+    if(section==='external'){DATA.external.push({id:newId,...obj});}
+    else{DATA.internal.push({id:newId,...obj});}
+    showToast('✅ تم إضافة البرنامج');
+  }
+  saveData();closeProgModal();renderAll();
+}
+function deleteProg(id){
+  let idx=DATA.internal.findIndex(p=>p.id===id);
+  if(idx>-1){DATA.internal.splice(idx,1);}
+  else{idx=DATA.external.findIndex(p=>p.id===id);if(idx>-1)DATA.external.splice(idx,1);}
+  saveData();renderAll();showToast('🗑 تم حذف البرنامج');
+}
+
+// ======================== BAG MODAL ========================
+function openBagModal(id){
+  editingBagId=id;
+  document.getElementById('bag_id').value=id||'';
+  if(id){
+    const b=DATA.bags.find(x=>x.id===id);if(!b)return;
+    document.getElementById('bagModalIcon').textContent='✏️';
+    document.getElementById('bagModalTitle').textContent='تعديل الحقيبة';
+    document.getElementById('bag_name').value=b.name;
+    document.getElementById('bag_cost').value=b.cost||'';
+    document.getElementById('bag_status').value=b.status||'done';
+    document.getElementById('bag_notes').value=b.notes||'';
+  } else {
+    document.getElementById('bagModalIcon').textContent='🎒';
+    document.getElementById('bagModalTitle').textContent='إضافة حقيبة تدريبية';
+    ['bag_name','bag_cost','bag_notes'].forEach(f=>document.getElementById(f).value='');
+    document.getElementById('bag_status').value='done';
+  }
+  openOverlay('bagModal');
+}
+function closeBagModal(){closeOverlay('bagModal');}
+function saveBag(){
+  const name=document.getElementById('bag_name').value.trim();
+  if(!name){showToast('❌ أدخل اسم الحقيبة');return;}
+  const obj={name,cost:parseInt(document.getElementById('bag_cost').value)||0,status:document.getElementById('bag_status').value,notes:document.getElementById('bag_notes').value.trim()};
+  const id=parseInt(document.getElementById('bag_id').value)||null;
+  if(id){const idx=DATA.bags.findIndex(b=>b.id===id);if(idx>-1)DATA.bags[idx]={...DATA.bags[idx],...obj};showToast('✏️ تم تعديل الحقيبة');}
+  else{DATA.bags.push({id:nextId++,...obj});showToast('✅ تم إضافة الحقيبة');}
+  saveData();closeBagModal();renderAll();
+}
+function deleteBag(id){
+  DATA.bags=DATA.bags.filter(b=>b.id!==id);
+  saveData();renderAll();showToast('🗑 تم حذف الحقيبة');
+}
+
+// ======================== FILTER ========================
+function filterProgs(val,section){
+  if(section==='internal')internalFilter=val.toLowerCase();
+  else externalFilter=val.toLowerCase();
+  renderTables();
+}
+
+// ======================== RENDER ========================
+const TL={hazori:'حضوري',remote:'عن بعد',external:'خارجي'};
+const SL={done:'✅ مكتملة',inprogress:'🔵 قيد الإعداد',pending:'🟡 مخططة'};
+
+function renderAll(){
+  updateKPIs();
+  updateCosts();
+  renderTables();
+  renderBags();
+  renderTeam();
+  updateCharts();
+  updateDateDisplay();
+  applyTitles();
+  applyLogo();
+}
+
+function updateKPIs(){
+  const intl=DATA.internal.length;
+  const extl=DATA.external.length;
+  document.getElementById('kPrograms').textContent=intl+extl;
+  document.getElementById('kProgSub').textContent=`داخلي: ${intl} | خارجي: ${extl}`;
+  document.getElementById('kBags').textContent=DATA.bags.length;
+  document.getElementById('kBagSub').textContent=`${DATA.bags.filter(b=>b.status==='done').length} مكتملة`;
+  const trainers=new Set([...DATA.internal.map(p=>p.trainer)].filter(t=>t&&t!=='جهة خارجية'));
+  document.getElementById('kTrainers').textContent=trainers.size;
+  const totalP=DATA.internal.reduce((s,p)=>s+(p.count||0),0)+DATA.external.reduce((s,p)=>s+(p.count||0),0);
+  document.getElementById('kParticipants').textContent=totalP.toLocaleString('en-US');
+  const ruwwad=DATA.internal.reduce((s,p)=>s+(p.cost||0),0)+DATA.external.reduce((s,p)=>s+(p.cost||0),0)+DATA.bags.reduce((s,b)=>s+(b.cost||0),0);
+  const vat=ruwwad*0.15;
+  const total=ruwwad+vat;
+}
+
+function updateCosts(){
+  const intCost=DATA.internal.reduce((s,p)=>s+(p.cost||0),0);
+  const extCost=DATA.external.reduce((s,p)=>s+(p.cost||0),0);
+  const bagCost=DATA.bags.reduce((s,b)=>s+(b.cost||0),0);
+  const ruwwad=intCost+extCost+bagCost;
+  const vat=Math.round(ruwwad*0.15*100)/100;
+  const totalRuwwad=ruwwad+vat;
+  const remaining=TOTAL_PROJECT-totalRuwwad;
+
+  document.getElementById('cInternal').textContent=intCost.toLocaleString('en-US')+' ريال';
+  document.getElementById('cInternalSub').textContent=DATA.internal.length+' برنامج';
+  document.getElementById('cExternal').textContent=extCost.toLocaleString('en-US')+' ريال';
+  document.getElementById('cExternalSub').textContent=DATA.external.length+' برنامج';
+  document.getElementById('cBags').textContent=bagCost.toLocaleString('en-US')+' ريال';
+  document.getElementById('cBagsSub').textContent=DATA.bags.length+' حقيبة';
+  document.getElementById('cRemaining').textContent=remaining.toLocaleString('en-US',{maximumFractionDigits:2})+' ريال';
+
+  document.getElementById('bRuwwad').textContent=ruwwad.toLocaleString('en-US')+' ريال';
+  document.getElementById('bVat').textContent=vat.toLocaleString('en-US')+' ريال';
+  document.getElementById('bRemain').textContent=remaining.toLocaleString('en-US',{maximumFractionDigits:2})+' ريال';
+
+  const pct=Math.min(Math.round(totalRuwwad/TOTAL_PROJECT*100),100);
+  document.getElementById('budgetFill').style.width=pct+'%';
+  document.getElementById('budgetFill').setAttribute('data-pct', pct+'%');
+  document.getElementById('budgetTotalLabel').textContent=`إجمالي قيمة المشروع: ${TOTAL_PROJECT.toLocaleString('en-US')} ريال — المُصرف: ${pct}%`;
+
+  // Budget KPI row
+  const fmt=n=>n.toLocaleString('en-US',{maximumFractionDigits:0})+' ريال';
+  const el=id=>document.getElementById(id);
+  if(el('bkTotal'))   el('bkTotal').textContent   = fmt(TOTAL_PROJECT);
+  if(el('bkSpent'))   el('bkSpent').textContent   = fmt(totalRuwwad);
+  if(el('bkSpentSub'))el('bkSpentSub').textContent= `برامج + حقائب + ضريبة`;
+  if(el('bkRemain'))  el('bkRemain').textContent  = fmt(remaining);
+  if(el('bkProgress')){
+    el('bkProgress').textContent   = pct+'%';
+    el('bkProgressLbl').textContent= pct+'%';
+    el('bkProgressBar').style.width= pct+'%';
+  }
+}
+
+function renderTables(){
+  // Internal
+  const iData=DATA.internal.filter(p=>!internalFilter||p.name.includes(internalFilter)||p.trainer.includes(internalFilter));
+  document.getElementById('internalCount').textContent=DATA.internal.length;
+  document.getElementById('internalTbody').innerHTML=iData.map((p,i)=>`
+    <tr>
+      <td><div class="num-badge">${i+1}</div></td>
+      <td><div class="prog-name">${p.name}</div><div class="prog-venue">${p.venue||''}</div></td>
+      <td style="color:var(--text-muted);font-size:12px">${p.trainer}</td>
+      <td><span class="type-badge ${p.type}">${TL[p.type]||p.type}</span></td>
+      <td style="font-weight:600;text-align:center">${p.count||'—'}</td>
+      <td style="color:var(--text-muted);text-align:center">${p.days?p.days+' يوم':'—'}</td>
+      <td style="color:var(--text-muted);font-size:12px">${p.date||'—'}</td>
+      <td>${p.rating?`<div class="rating-cell"><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:${p.rating}%"></div></div><span class="rating-pct">${p.rating}%</span></div>`:'<span style="color:var(--text-dim);font-size:12px">—</span>'}</td>
+      <td class="price-col" style="font-family:\'Tajawal\';font-weight:700;color:var(--gold)">${p.cost?p.cost.toLocaleString('en-US'):'—'}</td>
+      <td><div class="action-btns">
+        <button class="btn-act edit" onclick="requirePwd('edit_prog_${p.id}')" title="تعديل">✏️</button>
+        <button class="btn-act del" onclick="requirePwd('del_prog_${p.id}')" title="حذف">🗑</button>
+      </div></td>
+    </tr>`).join('');
+
+  // External
+  const eData=DATA.external.filter(p=>!externalFilter||p.name.includes(externalFilter)||p.trainer.includes(externalFilter));
+  document.getElementById('externalCount').textContent=DATA.external.length;
+  document.getElementById('externalTbody').innerHTML=eData.map((p,i)=>`
+    <tr>
+      <td><div class="num-badge">${i+1}</div></td>
+      <td><div class="prog-name">${p.name}</div></td>
+      <td style="color:var(--text-muted);font-size:12px">${p.trainer}</td>
+      <td style="font-weight:600;text-align:center">${p.count||'—'}</td>
+      <td style="color:var(--text-muted);text-align:center">${p.days?p.days+' يوم':'—'}</td>
+      <td style="color:var(--text-muted);font-size:12px">${p.date||'—'}</td>
+      <td class="price-col" style="font-family:\'Tajawal\';font-weight:700;color:var(--gold)">${p.cost?p.cost.toLocaleString('en-US'):'—'}</td>
+      <td><div class="action-btns">
+        <button class="btn-act edit" onclick="requirePwd('edit_prog_${p.id}')" title="تعديل">✏️</button>
+        <button class="btn-act del" onclick="requirePwd('del_prog_${p.id}')" title="حذف">🗑</button>
+      </div></td>
+    </tr>`).join('');
+}
+
+function renderBags(){
+  document.getElementById('bagsCount').textContent=DATA.bags.length;
+  document.getElementById('bagsGrid').innerHTML=DATA.bags.map((b,i)=>`
+    <div class="bag-card">
+      <div class="bag-num">${i+1}</div>
+      <div class="bag-name">${b.name}</div>
+      <div class="bag-cost price-val">${b.cost?b.cost.toLocaleString('en-US')+' ريال':'—'}</div>
+      ${b.notes?`<div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">${b.notes}</div>`:''}
+      <div class="bag-footer">
+        <span class="bag-status ${b.status}">${SL[b.status]||'—'}</span>
+        <div style="display:flex;gap:4px">
+          <button class="btn-act edit" onclick="requirePwd('edit_bag_${b.id}')" title="تعديل">✏️</button>
+          <button class="btn-act del" onclick="requirePwd('del_bag_${b.id}')" title="حذف">🗑</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ======================== CHARTS ========================
+let charts={};
+function updateCharts(){
+  Chart.defaults.font.family="'Cairo','Tajawal',sans-serif";
+  Chart.defaults.color='#5a6a7a';
+
+  const h=DATA.internal.filter(p=>p.type==='hazori').length;
+  const r=DATA.internal.filter(p=>p.type==='remote').length;
+  const e=DATA.external.length;
+
+  if(charts.type){
+    charts.type.data.datasets[0].data=[h,r,e];
+    charts.type.update();
+  } else {
+    charts.type=new Chart(document.getElementById('chartType'),{
+      type:'doughnut',
+      data:{labels:['حضوري','عن بعد','خارجي'],datasets:[{data:[h,r,e],backgroundColor:['#00796b','#1565c0','#e65100'],borderColor:'#fff',borderWidth:3,hoverOffset:6}]},
+      options:{cutout:'65%',plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:14,font:{size:12}}},tooltip:{rtl:true}},animation:{duration:800}}
+    });
+  }
+
+  const allProgs=[...DATA.internal,...DATA.external];
+  const y24=allProgs.filter(p=>p.date&&p.date.startsWith('2024')).length;
+  const y25=allProgs.filter(p=>p.date&&p.date.startsWith('2025')).length;
+  const y26=allProgs.filter(p=>p.date&&p.date.startsWith('2026')).length;
+
+  if(charts.year){
+    charts.year.data.datasets[0].data=[y24,y25,y26];
+    charts.year.update();
+  } else {
+    charts.year=new Chart(document.getElementById('chartYear'),{
+      type:'bar',
+      data:{labels:['2024','2025','2026'],datasets:[{label:'عدد البرامج',data:[y24,y25,y26],backgroundColor:['rgba(0,121,107,.7)','rgba(0,121,107,.85)','rgba(0,121,107,1)'],borderRadius:8,borderSkipped:false}]},
+      options:{responsive:true,plugins:{legend:{display:false},tooltip:{rtl:true,callbacks:{label:c=>` ${c.parsed.y} برامج`}}},scales:{x:{grid:{display:false}},y:{grid:{color:'#f1f5f9'},ticks:{stepSize:2}}}}
+    });
+  }
+
+  // Trainer list
+  const trainerMap={};
+  DATA.internal.forEach(p=>{if(p.trainer&&p.trainer!=='جهة خارجية'){trainerMap[p.trainer]=(trainerMap[p.trainer]||0)+1;}});
+  const sorted=Object.entries(trainerMap).filter(([n,c])=>c>=2).sort((a,b)=>b[1]-a[1]);
+  document.getElementById('trainerList').innerHTML=sorted.length ? sorted.map(([name,count])=>`
+    <div class="trainer-item">
+      <span class="trainer-name">${name}</span>
+      <span class="trainer-count">${count} برامج</span>
+    </div>`).join('') : '<div style="color:var(--text-dim);font-size:12px;padding:8px">لا يوجد مدربون بأكثر من برنامجين</div>';
+}
+
+
+// ======================== SETTINGS TABS ========================
+function switchStab(n){
+  [1,2,3].forEach(i=>{
+    document.getElementById('stab'+i).classList.toggle('active',i===n);
+    const p=document.getElementById('stab_panel'+i);
+    p.style.display=i===n?'flex':'none';
+    if(i===n)p.style.flexDirection='column';
+  });
+}
+
+// ======================== TITLES ========================
+function saveTitles(){
+  DATA.dashTitle=document.getElementById('s_dashTitle').value.trim()||DATA.dashTitle;
+  DATA.dashSubtitle=document.getElementById('s_dashSubtitle').value.trim()||DATA.dashSubtitle;
+  DATA.projectName=document.getElementById('s_projectName').value.trim()||DATA.projectName;
+  DATA.projectDesc=document.getElementById('s_projectDesc').value.trim()||DATA.projectDesc;
+  saveData();applyTitles();closeOverlay('pwdOverlay');
+  showToast('✅ تم حفظ العناوين');
+}
+function applyTitles(){
+  document.getElementById('topbarTitle').textContent=DATA.dashTitle||'مركز وقاء — لوحة المتابعة';
+  document.getElementById('topbarSub').textContent=DATA.dashSubtitle||'';
+  document.getElementById('bannerTitle').textContent=DATA.projectName||'';
+  document.getElementById('bannerDesc').textContent=DATA.projectDesc||'';
+  document.title=DATA.dashTitle||'لوحة المتابعة';
+}
+
+// ======================== LOGO ========================
+function previewLogo(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const url=e.target.result;
+    document.getElementById('logoPreview').innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:contain;border-radius:12px">`;
+    DATA.logoDataUrl=url;
+  };
+  reader.readAsDataURL(file);
+}
+function saveLogo(){
+  saveData();applyLogo();closeOverlay('pwdOverlay');
+  showToast('✅ تم حفظ الشعار');
+}
+function removeLogo(){
+  DATA.logoDataUrl='';
+  document.getElementById('logoPreview').innerHTML='🏢';
+  applyLogo();saveData();showToast('🗑 تم إزالة الشعار');
+}
+function applyLogo(){
+  const logo=document.getElementById('topbarLogo');
+  if(DATA.logoDataUrl){
+    logo.innerHTML=`<img src="${DATA.logoDataUrl}" style="width:100%;height:100%;object-fit:contain;border-radius:10px">`;
+    logo.style.padding='2px';
+  } else {
+    logo.innerHTML='و';
+    logo.style.padding='';
+  }
+}
+
+// ======================== TEAM ========================
+function openTeamModal(id){
+  document.getElementById('team_id').value=id||'';
+  if(id){
+    const m=DATA.team.find(t=>t.id===id);if(!m)return;
+    document.getElementById('teamModalIcon').textContent='✏️';
+    document.getElementById('teamModalTitle').textContent='تعديل بيانات العضو';
+    document.getElementById('team_name').value=m.name;
+    document.getElementById('team_role').value=m.role||'';
+    document.getElementById('team_email').value=m.email||'';
+  } else {
+    document.getElementById('teamModalIcon').textContent='👤';
+    document.getElementById('teamModalTitle').textContent='إضافة عضو فريق';
+    ['team_name','team_role','team_email'].forEach(f=>document.getElementById(f).value='');
+  }
+  openOverlay('teamModal');
+}
+function closeTeamModal(){closeOverlay('teamModal');}
+function saveTeamMember(){
+  const name=document.getElementById('team_name').value.trim();
+  if(!name){showToast('❌ أدخل الاسم الكامل');return;}
+  const obj={name,role:document.getElementById('team_role').value.trim(),email:document.getElementById('team_email').value.trim()};
+  const id=parseInt(document.getElementById('team_id').value)||null;
+  if(id){const idx=DATA.team.findIndex(t=>t.id===id);if(idx>-1)DATA.team[idx]={...DATA.team[idx],...obj};showToast('✏️ تم تحديث بيانات العضو');}
+  else{DATA.team.push({id:nextId++,...obj});showToast('✅ تم إضافة العضو');}
+  saveData();closeTeamModal();renderTeam();
+}
+function deleteTeamMember(id){
+  DATA.team=DATA.team.filter(t=>t.id!==id);
+  saveData();renderTeam();showToast('🗑 تم حذف العضو');
+}
+function renderTeam(){
+  document.getElementById('teamCount').textContent=DATA.team.length;
+  const initials=name=>name.split(' ').map(w=>w[0]).join('').substring(0,2);
+  const grid=document.getElementById('teamGrid');
+  grid.innerHTML=DATA.team.map((m,idx)=>`
+    <div class="team-card" draggable="true" data-id="${m.id}" data-idx="${idx}"
+      style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;align-items:center;gap:12px;position:relative;user-select:none">
+      <div style="position:absolute;top:6px;left:8px;font-size:14px;color:var(--text-dim);cursor:grab" title="اسحب لإعادة الترتيب">⠿</div>
+      <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;display:flex;align-items:center;justify-content:center;font-family:Tajawal;font-weight:800;font-size:14px;flex-shrink:0">${initials(m.name)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.name}</div>
+        <div style="font-size:11px;color:var(--primary);font-weight:600;margin-top:2px">${m.role||'—'}</div>
+        ${m.email?`<div style="font-size:10px;color:var(--text-dim);margin-top:2px;direction:ltr;text-align:right">${m.email}</div>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <button class="btn-act edit" onclick="requirePwd('edit_team_${m.id}')" title="تعديل" style="padding:4px 6px">✏️</button>
+        <button class="btn-act del" onclick="requirePwd('del_team_${m.id}')" title="حذف" style="padding:4px 6px">🗑</button>
+      </div>
+    </div>`).join('');
+  initTeamDrag();
+}
+
+// ======================== WIDGET DRAG & DROP ========================
+function initWidgetDrag(gridId) {
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
+  const cards = [...grid.querySelectorAll('[draggable="true"]')];
+  let dragSrc = null;
+
+  cards.forEach(card => {
+    card.addEventListener('dragstart', e => {
+      dragSrc = card;
+      card.classList.add('widget-dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', '');
+    });
+    card.addEventListener('dragend', () => {
+      cards.forEach(c => c.classList.remove('widget-dragging', 'widget-drag-over'));
+      dragSrc = null;
+    });
+    card.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      if (card !== dragSrc) {
+        cards.forEach(c => c.classList.remove('widget-drag-over'));
+        card.classList.add('widget-drag-over');
+      }
+    });
+    card.addEventListener('dragleave', () => card.classList.remove('widget-drag-over'));
+    card.addEventListener('drop', e => {
+      e.preventDefault();
+      cards.forEach(c => c.classList.remove('widget-drag-over', 'widget-dragging'));
+      if (!dragSrc || dragSrc === card) return;
+
+      // Swap positions in DOM
+      const allCards = [...grid.children];
+      const srcIdx = allCards.indexOf(dragSrc);
+      const dstIdx = allCards.indexOf(card);
+
+      if (srcIdx < dstIdx) {
+        grid.insertBefore(dragSrc, card.nextSibling);
+      } else {
+        grid.insertBefore(dragSrc, card);
+      }
+      dragSrc = null;
+      showToast('↔️ تم تحريك المربع');
+    });
+  });
+}
+
+
+let dragSrcIdx=null;
+function initTeamDrag(){
+  const cards=[...document.querySelectorAll('.team-card')];
+  cards.forEach(card=>{
+    card.addEventListener('dragstart',e=>{
+      dragSrcIdx=parseInt(card.dataset.idx);
+      card.classList.add('dragging');
+      e.dataTransfer.effectAllowed='move';
+    });
+    card.addEventListener('dragend',()=>card.classList.remove('dragging'));
+    card.addEventListener('dragover',e=>{
+      e.preventDefault();
+      e.dataTransfer.dropEffect='move';
+      cards.forEach(c=>c.classList.remove('drag-over'));
+      card.classList.add('drag-over');
+    });
+    card.addEventListener('dragleave',()=>card.classList.remove('drag-over'));
+    card.addEventListener('drop',e=>{
+      e.preventDefault();
+      cards.forEach(c=>c.classList.remove('drag-over','dragging'));
+      const destIdx=parseInt(card.dataset.idx);
+      if(dragSrcIdx===null||dragSrcIdx===destIdx)return;
+      const moved=DATA.team.splice(dragSrcIdx,1)[0];
+      DATA.team.splice(destIdx,0,moved);
+      dragSrcIdx=null;
+      saveData();
+      renderTeam();
+      showToast('↕️ تم إعادة ترتيب الفريق');
+    });
+  });
+}
+
+// ======================== TOAST ========================
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ======================== KEYBOARD ========================
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    ['pwdOverlay','progModal','bagModal','dateModal'].forEach(id=>closeOverlay(id));
+  }
+});
+
+// ======================== INIT ========================
+loadData();
+// Recalculate nextId to avoid collisions after load
+{
+  const allIds = [
+    ...DATA.internal.map(p=>p.id),
+    ...DATA.external.map(p=>p.id),
+    ...DATA.bags.map(b=>b.id),
+    ...DATA.team.map(t=>t.id)
+  ];
+  if(allIds.length) nextId = Math.max(...allIds) + 1;
+}
+renderAll();
+// Initialize widget drag & drop for dashboard KPI rows
+initWidgetDrag('kpiGrid');
+initWidgetDrag('budgetKpiRow');
+</script>
+
+<!-- ====== TEAM MEMBER MODAL ====== -->
+<div class="overlay" id="teamModal" onclick="if(event.target===this)closeTeamModal()">
+  <div class="modal sm">
+    <div class="modal-bar"></div>
+    <div class="modal-head">
+      <div class="modal-title"><span id="teamModalIcon">👤</span><span id="teamModalTitle">إضافة عضو فريق</span></div>
+      <button class="btn-close" onclick="closeTeamModal()">✕</button>
+    </div>
+    <input type="hidden" id="team_id">
+    <div style="display:flex;flex-direction:column;gap:13px">
+      <div class="form-group">
+        <label class="form-label">الاسم الكامل <span class="req">*</span></label>
+        <input type="text" id="team_name" class="form-inp" placeholder="أ. محمد العنزي">
+      </div>
+      <div class="form-group">
+        <label class="form-label">المسمى الوظيفي / الدور</label>
+        <input type="text" id="team_role" class="form-inp" placeholder="مدير المشروع">
+      </div>
+      <div class="form-group">
+        <label class="form-label">الإيميل (اختياري)</label>
+        <input type="email" id="team_email" class="form-inp" placeholder="example@waqaa.com" style="direction:ltr;text-align:right">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeTeamModal()">إلغاء</button>
+      <button class="btn-save" onclick="saveTeamMember()">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
